@@ -1,33 +1,40 @@
-Custom Background Job Runner for Laravel
-Objective
+# Custom Background Job Runner for Laravel
 
+****
+
+# Objective
+****
 The goal of this project is to design and implement a custom system to execute PHP classes as background jobs, independent of Laravel's built-in queue system. This solution demonstrates scalability, error handling, and ease of use within a Laravel application.
-Features
 
-    Background Job Execution: Execute PHP classes and methods in the background, separate from the main Laravel application process.
-    Error Handling: Catch exceptions and log errors to a dedicated log file.
-    Retry Mechanism: Configurable retry attempts for failed jobs.
-    Logging: Log job statuses, including success, failure, and progress, with timestamps.
-    Security: Validate and sanitize class and method names to prevent unauthorized or harmful execution.
+# Features
+***
+Background Job Execution: Execute PHP classes and methods in the background, separate from the main Laravel application process.
+Error Handling: Catch exceptions and log errors to a dedicated log file.
+Retry Mechanism: Configurable retry attempts for failed jobs.
+Logging: Log job statuses, including success, failure, and progress, with timestamps.
+Security: Validate and sanitize class and method names to prevent unauthorized or harmful execution.
 
-Installation
+
+# Installation
+****
 
 To install the custom background job runner in your Laravel application, follow the steps below.
+
 Step 1: Clone the Repository
 
 Clone the repository into your Laravel project:
 
-git clone https://github.com/Mabonito/custom-job-runner.git
+    git clone https://github.com/Mabonito/custom-job-runner.git
 
 Step 2: Install Dependencies
 
 Install the necessary dependencies via Composer:
 
-composer install
+    composer install
 
 Step 3: Configuration
 
-Make sure to add any necessary configuration settings for your custom job runner system in the .env file. If applicable, specify the location of the log file, retry attempts, and any other relevant configurations.
+Make sure to add any necessary configuration settings for your custom job runner system in the $.env file. If applicable, specify the location of the log file, retry attempts, and any other relevant configurations.
 Usage
 runBackgroundJob Function
 
@@ -47,10 +54,11 @@ Parameters
 
 Example Usage
 
-runBackgroundJob('App\\Services\\BackgroundJobRunner', 'processData', [$data], 3, 10, 2);
+    runBackgroundJob('App\\Services\\BackgroundJobRunner', 'processData', [$data], 3, 10, 2);
 
 This will execute the processData method of BackgroundJobRunner class in the background, with a retry attempt of 3, a 10-second delay, and a priority of 2.
-Job Execution
+
+# Job Execution
 
 Jobs are executed in the background using system commands to run them in separate processes. The job can be executed for both Windows and Unix-based systems.
 
@@ -64,9 +72,9 @@ Error Handling
 
 Sample Error Log
 
-[2024-11-21 12:30:00] ERROR: Job failed for App\\Services\\BackgroundJobRunner::processData. Error: [Exception details]
+    [2024-11-21 12:30:00] ERROR: Job failed for App\\Services\\BackgroundJobRunner::processData. Error: [Exception details]
 
-Retry Mechanism
+# Retry Mechanism
 
 Jobs that fail can be retried a configurable number of times. If a job fails, the system will attempt to run the job again, up to the specified retry limit. The retry attempts will respect the configured delay between each retry.
 Job Logging
@@ -74,8 +82,8 @@ Job Logging
 Each job's execution status, including start time, completion time, success/failure status, and any error messages, is logged into the background_jobs.log file.
 Sample Log Entry
 
-[2024-11-21 12:30:00] INFO: Job started for App\\Services\\BackgroundJobRunner::processData.
-[2024-11-21 12:32:00] INFO: Job completed successfully for App\\Services\\BackgroundJobRunner::processData.
+    [2024-11-21 12:30:00] INFO: Job started for App\\Services\\BackgroundJobRunner::processData.
+    [2024-11-21 12:32:00] INFO: Job completed successfully for App\\Services\\BackgroundJobRunner::processData.
 
 Security
 
@@ -87,36 +95,24 @@ Web-Based Dashboard
 
 A simple Laravel web interface is provided to manage and monitor background jobs. The dashboard includes:
 
-    Active Jobs: View currently running jobs and their statuses.
+    Active Jobs: View currently running
     Job Logs: View logs of completed or failed jobs.
-    Cancel Jobs: Option to cancel running jobs if needed.
     Retry Mechanism: View and retry failed jobs from the interface.
 
-Job Delays and Priorities
+# Sample Configuration
 
-    Delays: You can specify a delay in seconds for the execution of a job.
-    Priorities: Jobs can be assigned a priority value to ensure higher-priority jobs run first.
+    BACKGROUND_JOB_LOG=storage/logs/background_jobs.log
+    ERROR_LOG=storage/logs/background_jobs_errors.log
+    DEFAULT_RETRY_ATTEMPTS=3
+    DEFAULT_DELAY=10
+    DEFAULT_PRIORITY=1
 
-Sample Configuration
-
-BACKGROUND_JOB_LOG=storage/logs/background_jobs.log
-ERROR_LOG=storage/logs/background_jobs_errors.log
-DEFAULT_RETRY_ATTEMPTS=3
-DEFAULT_DELAY=10
-DEFAULT_PRIORITY=1
-
-Testing
+# Testing
 
 You can test the background job runner by executing different methods and observing the logs for success or failure. Here's an example test case:
 
-public function testBackgroundJobExecution()
-{
-    $result = runBackgroundJob('App\\Services\\BackgroundJobRunner', 'processData', [$data]);
-    $this->assertTrue($result);
-}
-
-Assumptions and Limitations
-
-    The system assumes that the environment supports running background processes (e.g., using nohup on Unix or start on Windows).
-    The retry mechanism is basic and may need further enhancement for more complex scenarios.
-    The system doesn’t handle resource-intensive jobs that require significant memory or CPU.
+    public function testBackgroundJobExecution()
+    {
+        $result = runBackgroundJob('App\\Services\\BackgroundJobRunner', 'processData', [$data]);
+        $this->assertTrue($result);
+    }
