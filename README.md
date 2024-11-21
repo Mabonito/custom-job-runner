@@ -1,71 +1,122 @@
-<<<<<<< HEAD
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+Custom Background Job Runner for Laravel
+Objective
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+The goal of this project is to design and implement a custom system to execute PHP classes as background jobs, independent of Laravel's built-in queue system. This solution demonstrates scalability, error handling, and ease of use within a Laravel application.
+Features
 
-## About Laravel
+    Background Job Execution: Execute PHP classes and methods in the background, separate from the main Laravel application process.
+    Error Handling: Catch exceptions and log errors to a dedicated log file.
+    Retry Mechanism: Configurable retry attempts for failed jobs.
+    Logging: Log job statuses, including success, failure, and progress, with timestamps.
+    Security: Validate and sanitize class and method names to prevent unauthorized or harmful execution.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Installation
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+To install the custom background job runner in your Laravel application, follow the steps below.
+Step 1: Clone the Repository
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Clone the repository into your Laravel project:
 
-## Learning Laravel
+git clone https://github.com/Mabonito/custom-job-runner.git
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Step 2: Install Dependencies
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+Install the necessary dependencies via Composer:
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+composer install
 
-## Laravel Sponsors
+Step 3: Configuration
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+Make sure to add any necessary configuration settings for your custom job runner system in the .env file. If applicable, specify the location of the log file, retry attempts, and any other relevant configurations.
+Usage
+runBackgroundJob Function
 
-### Premium Partners
+The main function to run background jobs is runBackgroundJob, which is a global helper function in Laravel.
+Function Signature
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+runBackgroundJob(string $className, string $methodName, array $params = [], int $retryAttempts = 3, int $delay = 0, int $priority = 1)
 
-## Contributing
+Parameters
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+    className: The fully qualified class name to be executed in the background.
+    methodName: The method of the class to be executed.
+    params: The parameters to be passed to the method.
+    retryAttempts: The number of retry attempts in case the job fails (default: 3).
+    delay: The number of seconds to delay the execution of the job (default: 0).
+    priority: A priority value (higher value = higher priority).
 
-## Code of Conduct
+Example Usage
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+runBackgroundJob('App\\Services\\BackgroundJobRunner', 'processData', [$data], 3, 10, 2);
 
-## Security Vulnerabilities
+This will execute the processData method of BackgroundJobRunner class in the background, with a retry attempt of 3, a 10-second delay, and a priority of 2.
+Job Execution
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Jobs are executed in the background using system commands to run them in separate processes. The job can be executed for both Windows and Unix-based systems.
 
-## License
+    On Unix-based systems, the command runs using nohup to ensure that it continues running in the background even if the session ends.
+    On Windows, the job is executed using start to open a new process.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
-=======
-# custom-job-runner
-Laravel Project
->>>>>>> c6e0b6992168d6b953f89ecd840bf861e6e1dc1b
+Error Handling
+
+    All errors encountered during job execution are logged in the background_jobs_errors.log file.
+    If an exception occurs in the background process, it will be caught, and an error message will be logged.
+
+Sample Error Log
+
+[2024-11-21 12:30:00] ERROR: Job failed for App\\Services\\BackgroundJobRunner::processData. Error: [Exception details]
+
+Retry Mechanism
+
+Jobs that fail can be retried a configurable number of times. If a job fails, the system will attempt to run the job again, up to the specified retry limit. The retry attempts will respect the configured delay between each retry.
+Job Logging
+
+Each job's execution status, including start time, completion time, success/failure status, and any error messages, is logged into the background_jobs.log file.
+Sample Log Entry
+
+[2024-11-21 12:30:00] INFO: Job started for App\\Services\\BackgroundJobRunner::processData.
+[2024-11-21 12:32:00] INFO: Job completed successfully for App\\Services\\BackgroundJobRunner::processData.
+
+Security
+
+    Only pre-approved classes and methods can be executed in the background. The system ensures that any unauthorized class or method is rejected.
+    Class and method names are validated and sanitized to prevent malicious input.
+
+Advanced Features
+Web-Based Dashboard
+
+A simple Laravel web interface is provided to manage and monitor background jobs. The dashboard includes:
+
+    Active Jobs: View currently running jobs and their statuses.
+    Job Logs: View logs of completed or failed jobs.
+    Cancel Jobs: Option to cancel running jobs if needed.
+    Retry Mechanism: View and retry failed jobs from the interface.
+
+Job Delays and Priorities
+
+    Delays: You can specify a delay in seconds for the execution of a job.
+    Priorities: Jobs can be assigned a priority value to ensure higher-priority jobs run first.
+
+Sample Configuration
+
+BACKGROUND_JOB_LOG=storage/logs/background_jobs.log
+ERROR_LOG=storage/logs/background_jobs_errors.log
+DEFAULT_RETRY_ATTEMPTS=3
+DEFAULT_DELAY=10
+DEFAULT_PRIORITY=1
+
+Testing
+
+You can test the background job runner by executing different methods and observing the logs for success or failure. Here's an example test case:
+
+public function testBackgroundJobExecution()
+{
+    $result = runBackgroundJob('App\\Services\\BackgroundJobRunner', 'processData', [$data]);
+    $this->assertTrue($result);
+}
+
+Assumptions and Limitations
+
+    The system assumes that the environment supports running background processes (e.g., using nohup on Unix or start on Windows).
+    The retry mechanism is basic and may need further enhancement for more complex scenarios.
+    The system doesn’t handle resource-intensive jobs that require significant memory or CPU.
